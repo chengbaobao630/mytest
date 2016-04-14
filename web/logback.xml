@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration debug="false">
+
+    <property name="loggingRoot" value="C:\Temp"/>
+    <property name="loggingCharset" value="UTF-8"/>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+
+        <layout class="ch.qos.logback.classic.PatternLayout">
+
+            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+
+        </layout>
+
+    </appender>
+
+
+    <logger name="com.base22" level="TRACE"/>
+
+
+    <appender name="STDOUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${loggingRoot}\myTest.log</file>
+        <encoding>${loggingCharset}</encoding>
+        <append>true</append>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+
+            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+
+        </layout>
+        <prudent>false</prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${loggingRoot}/lms-admin.%d{yyyy-MM-dd.HH}.log.gz</fileNamePattern>
+            <!-- keep 24*30 hour' worth of history -->
+            <maxHistory>720</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+
+    <logger name="com.base22" level="TRACE"/>
+
+
+    <root>
+        <level value="debug"/>
+        <level value="info"/>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="console"/>
+    </root>
+
+</configuration>

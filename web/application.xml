@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+            http://www.springframework.org/schema/util
+			http://www.springframework.org/schema/util/spring-util-3.0.xsd
+			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd"
+>
+    <import resource="classpath*:SpringDataJpa.xml"></import>
+    <import resource="classpath*:Mongo.xml"/>
+    <!--<import resource="quartz.xml"/>-->
+    <task:annotation-driven scheduler="myScheduler" mode="proxy" />
+    <task:scheduler id="myScheduler" pool-size="10"/>
+    <mvc:annotation-driven/>
+    <context:component-scan base-package="cc.*"/>
+    <context:property-placeholder location="classpath*:*.properties"/>
+
+    <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource"
+          p:driverClassName="com.mysql.jdbc.Driver"
+          p:url="jdbc:mysql://192.168.1.105:3306/mytest?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"
+          p:username="root"
+          p:password="root"
+          p:initialSize="1"
+          p:maxActive="10"
+          p:jdbcInterceptors="org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer"
+          p:jmxEnabled="true"
+          p:testOnBorrow="true"
+          p:testOnReturn="true"
+          p:testWhileIdle="true"
+          p:removeAbandoned="true"
+          p:removeAbandonedTimeout="120"/>
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" autowire="default" abstract="false" lazy-init="false"
+          p:dataSource-ref="dataSource"/>
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+          p:viewClass="org.springframework.web.servlet.view.JstlView"
+          p:prefix="/WEB-INF/page/"
+          p:suffix=".jsp"/>
+
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" >
+        <property name="messageConverters">
+            <util:list id="beanList">
+                <ref bean="mappingJacksonHttpMessageConverter"/>
+            </util:list>
+        </property>
+    </bean>
+
+    <bean id="mappingJacksonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>application/json;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+
+ <!--
+    <mvc:interceptors>
+        <bean class="cc.firstTest.myInterceptor.CommonInterceptor"/>
+        <mvc:interceptor>
+            <mvc:mapping path="*.html" />
+            <bean class="cc.firstTest.myInterceptor.CommonInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>-->
+
+
+</beans>

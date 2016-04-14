@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="quartzJobBean" class="cc.firstTest.myQuartz.SyncFTP"/>
+    <bean id="SpringQtzJobMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="quartzJobBean"/>
+        </property>
+        <property name="targetMethod">
+            <value>syncMongoFtp</value>
+        </property>
+    </bean>
+    <bean id="CronTiggerBean" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="SpringQtzJobMethod"/>
+        <property name="cronExpression" value="0 */2 * * * " />
+    </bean>
+
+    <bean id="SpringJobSchedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="CronTiggerBean"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>
