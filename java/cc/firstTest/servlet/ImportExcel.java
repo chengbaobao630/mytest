@@ -4,21 +4,26 @@ import cc.firstTest.Service.LoginSrv;
 import cc.firstTest.Utils.DateTool;
 import cc.firstTest.domain.User;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -26,9 +31,8 @@ import java.util.UUID;
 /**
  * Created by cheng on 2016/4/15 0015.
  */
-@WebServlet(name = "importExcel" , urlPatterns = "importUser.do")
-@MultipartConfig()
-public class ImportExcel extends HttpServlet {
+@Controller
+public class ImportExcel {
 
     @Resource
     LoginSrv loginSrv;
@@ -38,18 +42,23 @@ public class ImportExcel extends HttpServlet {
 
 
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    @RequestMapping(value = "/importUser.do",method = RequestMethod.POST)
+    protected void importUser(
+            @RequestParam(value = "file")MultipartFile file,
+            HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("utf-8");
         resp.setCharacterEncoding("utf-8");
         resp.setContentType("text/html;charset=utf-8");
-        Part part=req.getPart("file");
-        HSSFWorkbook workbook=new HSSFWorkbook(part.getInputStream());
-        HSSFSheet sheet=workbook.getSheetAt(0);
-        List<User> users= Arrays.asList();
+        XSSFWorkbook workbook=new XSSFWorkbook(file.getInputStream());
+        XSSFSheet sheet=workbook.getSheetAt(0);
+        List<User> users= new ArrayList<>();
         for (int i=1;i<sheet.getLastRowNum();i++){
-            HSSFRow row=sheet.getRow(i);
-            User user=createUserInfos(row);
+            XSSFRow row=sheet.getRow(i);
+            User user=new User();
+            if(row!=null){
+                user=createUserInfos(row);
+            }
+
             if (user!=null){
                 users.add(user);
             }
@@ -62,11 +71,14 @@ public class ImportExcel extends HttpServlet {
         resp.sendRedirect("/myTest/welcome.html");
     }
 
-    private User createUserInfos(HSSFRow row) {
+    private User createUserInfos(XSSFRow row) {
         User user=new User();
-        String[] values=null;
+        String[] values=new String[3];
+        if (row==null){
+            return null;
+        }
         for (int i=0;i<row.getLastCellNum();i++){
-            HSSFCell cell=row.getCell(i);
+            XSSFCell cell=row.getCell(i);
             switch (cell.getCellType()){
                 case HSSFCell.CELL_TYPE_STRING:
                     values[i]=cell.getStringCellValue().toString();
@@ -112,8 +124,4 @@ public class ImportExcel extends HttpServlet {
     }
 
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        this.doGet(req,resp);
-    }
 }

@@ -22,7 +22,7 @@
 
     <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource"
           p:driverClassName="com.mysql.jdbc.Driver"
-          p:url="jdbc:mysql://192.168.1.105:3306/mytest?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"
+          p:url="jdbc:mysql://192.168.203.255:3306/mytest?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"
           p:username="root"
           p:password="root"
           p:initialSize="1"
