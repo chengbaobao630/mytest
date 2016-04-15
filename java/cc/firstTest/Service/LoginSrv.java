@@ -49,4 +49,9 @@ public class LoginSrv {
     public  void  addUser(User user)throws  Exception{
         userMongoRepo.insertUser(user);
     }
+
+    public  void  addUsers(List<User> users)throws  Exception{
+        userMongoRepo.insertUsers(users);
+    }
+
 }

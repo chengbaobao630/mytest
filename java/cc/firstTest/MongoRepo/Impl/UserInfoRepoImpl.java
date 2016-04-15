@@ -44,4 +44,8 @@ public class UserInfoRepoImpl implements UserInfoRepo {
     public void insertUser(User user)throws  Exception {
         mongoTemplate.save(user);
     }
+
+    public void insertUsers(List<User> users) throws Exception{
+        mongoTemplate.insert(users,User.class);
+    }
 }

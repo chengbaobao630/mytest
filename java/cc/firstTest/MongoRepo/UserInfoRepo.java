@@ -15,4 +15,6 @@ public interface UserInfoRepo {
     List<String> getAccounts();
 
     void  insertUser(User user) throws  Exception;
+
+    public void insertUsers(List<User> users) throws Exception;
 }
