@@ -28,6 +28,8 @@
         <input type="button" onclick="checkFile()" value="submit">
         <button onclick="checkFile()">submit</button>
       </form>
+        <input name="input" onblur="checkInput()" value="123456">
+        <input type="button" onclick="checkInput()" value="check">
     </div>
    </body>
 <script type="text/javascript">
@@ -39,6 +41,20 @@
         }else{
           alert("flase");
         }
+    }
+    function checkInput() {
+        var inputValue=document.getElementsByTagName("input")["input"].value;
+        var emptyInput=/^[\s]{0,}$/;
+        var year=/(^[12]?\d{0,3})[-./][01][1-9][-./]([012][0-9]|[3][01])$/;
+        if (emptyInput.test(inputValue)){
+            console.log("empty input");
+        }else if (year.test(inputValue)){
+            console.log("currect year");
+        }else{
+            inputValue=inputValue.replace(/\s/g,"");
+            console.log(inputValue);
+        }
+
     }
 </script>
 </html>

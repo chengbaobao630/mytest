@@ -13,6 +13,7 @@
 >
     <import resource="classpath*:SpringDataJpa.xml"></import>
     <import resource="classpath*:Mongo.xml"/>
+    <import resource="sync.xml"/>
     <!--<import resource="quartz.xml"/>-->
     <task:annotation-driven scheduler="myScheduler" mode="proxy" />
     <task:scheduler id="myScheduler" pool-size="10"/>
@@ -22,7 +23,7 @@
 
     <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource"
           p:driverClassName="com.mysql.jdbc.Driver"
-          p:url="jdbc:mysql://192.168.203.255:3306/mytest?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"
+          p:url="jdbc:mysql://192.168.153.130:3306/mytest?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"
           p:username="root"
           p:password="root"
           p:initialSize="1"
@@ -33,10 +34,12 @@
           p:testOnReturn="true"
           p:testWhileIdle="true"
           p:removeAbandoned="true"
-          p:removeAbandonedTimeout="120"/>
+          p:removeAbandonedTimeout="120"
+    />
 
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" autowire="default" abstract="false" lazy-init="false"
           p:dataSource-ref="dataSource"/>
+
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"
           p:viewClass="org.springframework.web.servlet.view.JstlView"
